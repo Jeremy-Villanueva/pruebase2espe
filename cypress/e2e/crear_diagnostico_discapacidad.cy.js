@@ -1,7 +1,14 @@
+
+import dayjs from 'dayjs';
+import 'dayjs/locale/es';
+dayjs.locale('es');
+
+
+
 describe ('login con correo', () => {
   it('inicia sesión usando el botón', () => {
     cy.visit('https://mejorninez-frontend.9.asimov.cl/auth/login')
-    cy.get ('input[type="email"]').type('luciano@asimov.cl')
+    cy.get ('input[type="email"]').type('francisco@asimov.cl')
     cy.get('input[type="password"]').type('Of3M4uV23QISQi')
     cy.contains('button', 'Ingresar').click()
 
@@ -78,11 +85,28 @@ cy.contains('button', 'Guardar')
 .click()
 
 
+cy.log('Verificando la notificación de éxito (toast)...');
 
-    // Verifica que se muestre la pantalla de inicio
-    cy.contains('Información NNA').should('be.visible')
+    // 1. Buscamos el CONTENEDOR de la notificación de éxito.
+    //    Le damos un timeout más largo por si la respuesta del servidor tarda.
+    //    El selector '.p-toast-message-success' es una suposición, ¡ajústalo con lo que encuentres!
+    cy.get('.p-toast-message-success', { timeout: 10000 })
+      .should('be.visible') // Verificamos que el contenedor de la alerta sea visible
+      .within(() => {
+        // 2. Usando .within(), ahora solo buscamos DENTRO de la notificación.
+        //    Esto evita confundir el texto con cualquier otro en la página.
 
+        // Verificamos el título del toast (si lo tiene) (no tiene por eso lo comenté)
+        //cy.get('.p-toast-summary').should('contain.text', 'Éxito');
+
+        // Verificamos el mensaje detallado del toast
+        cy.get('.p-toast-detail').should('contain.text', 'Discapacidad agregada correctamente');
+      });
+
+    cy.log('¡Notificación validada exitosamente y discapacidad creada!');
   
+
+
 
 
 
