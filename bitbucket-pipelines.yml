@@ -1,0 +1,23 @@
+image: cypress/browsers:node-20.11.0-chrome-121.0.6167.85-1-ff-120.0-edge-121.0.2277.83-1
+
+pipelines:
+  default:
+    - step:
+        name: Cypress E2E Tests
+        caches:
+          - node
+          - cypress
+        script:
+          # Instalar dependencias
+          - npm ci
+          
+          # Ejecutar Cypress y grabar en Cypress Cloud
+          - npx cypress run --record --key $CYPRESS_RECORD_KEY
+          
+        artifacts:
+          - cypress/videos/**
+          - cypress/screenshots/**
+
+definitions:
+  caches:
+    cypress: ~/.cache/Cypress
