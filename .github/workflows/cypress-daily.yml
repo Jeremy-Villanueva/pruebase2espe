@@ -1,0 +1,43 @@
+name: Cypress Tests - Daily Run
+
+on:
+  schedule:
+    # Se ejecuta todos los días a las 12:00 PM UTC (9:00 AM Chile)
+    - cron: '0 12 * * *'
+  
+  # También puedes ejecutarlo manualmente desde GitHub
+  workflow_dispatch:
+
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Instalar dependencias
+        run: npm ci
+      
+      - name: Ejecutar pruebas Cypress
+        uses: cypress-io/github-action@v6
+        with:
+          browser: chrome
+          headed: false
+          spec: cypress/e2e/instrumento_craft.cy.js
+      
+      - name: Guardar videos y screenshots
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cypress-results
+          path: |
+            cypress/videos
+            cypress/screenshots
+          retention-days: 7
