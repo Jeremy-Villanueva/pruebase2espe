@@ -36,13 +36,13 @@ describe('Flujo de Creación de Diagnóstico de Capacitación', () => {
 
   it('debería guardar el diagnóstico y verificar su creación con la fecha actual', () => {
 
-    cy.chooseInComplexSelector("div.border > div > div:nth-of-type(1) div.p-dropdown > span", "Proyecto: DAM-COLINA");
+    cy.chooseInComplexSelector("div.border > div > div:nth-of-type(1) div.p-dropdown > span", "DAM-COLINA");
 
     cy.chooseInComplexSelector("div:nth-of-type(3) > div.p-dropdown > span", "laboral");
     cy.chooseInComplexSelector("div:nth-of-type(4) > div.p-dropdown > span", "forestal");
     cy.chooseInComplexSelector("div:nth-of-type(5) > div.p-dropdown > span", "sence");
-    cy.selectDateByField('Fecha de inicio', dayjs().format('2025-09-11'));
-    cy.selectDateByField('Fecha de término', dayjs().format('2025-09-12'));
+    cy.selectDateByField('Fecha de inicio', dayjs().format('2025-11-17'));
+    cy.selectDateByField('Fecha de término', dayjs().format('2025-11-17'));
 
     cy.contains('label', 'Horas Curso')
       .closest('.flex-col')
@@ -59,11 +59,9 @@ describe('Flujo de Creación de Diagnóstico de Capacitación', () => {
 
     cy.contains('button', 'Guardar').click();
 
-    cy.get('.p-toast-message-success', { timeout: 10000 })
+    cy.get('.text-gray-700', { timeout: 10000 })
       .should('be.visible')
-      .within(() => {
-        cy.get('.p-toast-detail').should('contain.text', 'Capacitación guardada correctamente');
-      });
+      .and('contain.text', 'Capacitación guardada correctamente');
   });
 
   it('debería cancelar la creación del diagnóstico y verificar que no fue creado', () => {
@@ -127,11 +125,12 @@ describe('Flujo de Creación de Diagnóstico de Capacitación', () => {
 
     cy.contains('button', 'Guardar').click();
 
-    cy.get('.p-toast-message-success', { timeout: 10000 })
-      .should('contain.text', 'Capacitación guardada correctamente');
+    cy.get('.text-gray-700', { timeout: 10000 })
+      .should('be.visible')
+      .and('contain.text', 'Capacitación guardada correctamente');
   });
 
-  it.only('debería mostrar el contador de caracteres y validar el límite de 100 caracteres en observaciones', () => {
+  it('debería mostrar el contador de caracteres y validar el límite de 100 caracteres en observaciones', () => {
 
     cy.contains('label', 'Observaciones')
       .closest('.flex-col')
@@ -152,8 +151,8 @@ describe('Flujo de Creación de Diagnóstico de Capacitación', () => {
 
     cy.contains('button', 'Guardar').click();
 
-    cy.get('.p-toast-message', { timeout: 10000 })
+    cy.get('.text-gray-700', { timeout: 10000 })
       .should('be.visible')
-      .and('contain', 'Existen errores en el formulario');
+      .and('contain.text', 'Existen errores en el formulario');
   });
 });
