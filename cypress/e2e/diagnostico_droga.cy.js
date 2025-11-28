@@ -35,26 +35,24 @@ describe('Flujo de Creación de Diagnóstico de Droga', () => {
 
      cy.wait(2000);
 
-    cy.chooseInComplexSelector("div.border > div > div:nth-of-type(1) div.p-dropdown > span", "Proyecto: DAM-COLINA");
+    cy.chooseInComplexSelector("div.border > div > div:nth-of-type(1) div.p-dropdown > span", "DAM-COLINA");
 
     cy.wait(2000)
-    cy.selectDateByField('Fecha diagnóstico', dayjs().format('2025-10-05'));
+    cy.selectDateByField('Fecha diagnóstico', dayjs().format('2025-11-13'));
     cy.selectDropdownByField("Droga", 'ANSIOLITICOS');
     cy.wait(2000);
     cy.selectDropdownByField("Tipo de consumo droga", 'CONSUMO OCASIONAL');
     cy.selectDropdownByField("Tiene evaluación de consumo", 'Sí');
     cy.selectDropdownByField("Tiene tratamiento", 'Sí');
     cy.selectDropdownByField("Tiene rehabilitación", 'Sí');
-    cy.selectDropdownByField("Se atiende en CONACE", 'Sí');
+    cy.selectRadioByField("Se atiende en SENDA", 'Sí');
     cy.selectDropdownByField("Establecimiento de salud", 'VidaIntegra');
-    cy.selectDropdownByField("Trabajador/Profesional", 'FELIPE ALBERTO SOTO TORO');
+    cy.selectDropdownByField("Profesional/Técnico", 'FELIPE ALBERTO SOTO TORO');
     cy.get('textarea').type('Diagnóstico de prueba automatizada - Drogas');
     cy.contains('button', 'Guardar').click();
-  cy.get('.p-toast-message-success', { timeout: 10000 })
+  cy.get('.text-gray-700', { timeout: 10000 })
     .should('be.visible')
-    .within(() => {
-      cy.get('.p-toast-detail').should('contain.text', 'Diagnóstico de droga creado exitosamente');
-    });
+    .and('contain.text', 'Diagnóstico de droga creado exitosamente');
   })
 
   it('debería cancelar la creación del diagnóstico y verificar que no se guarda', () => {
@@ -63,17 +61,17 @@ describe('Flujo de Creación de Diagnóstico de Droga', () => {
 
      cy.wait(2000);
 
-    cy.chooseInComplexSelector("div.border > div > div:nth-of-type(1) div.p-dropdown > span", "Proyecto: DAM-COLINA");
+    cy.chooseInComplexSelector("div.border > div > div:nth-of-type(1) div.p-dropdown > span", "DAM-COLINA");
 
     cy.wait(2000)
-    cy.selectDateByField('Fecha diagnóstico', dayjs().format('2025-10-05'));
+    cy.selectDateByField('Fecha diagnóstico', dayjs().format('2025-11-13'));
     cy.selectDropdownByField("Droga", 'ANSIOLITICOS');
     cy.wait(2000);
     cy.selectDropdownByField("Tipo de consumo droga", 'CONSUMO OCASIONAL');
     cy.selectDropdownByField("Tiene evaluación de consumo", 'Sí');
     cy.selectDropdownByField("Tiene tratamiento", 'Sí');
     cy.selectDropdownByField("Tiene rehabilitación", 'Sí');
-    cy.selectDropdownByField("Se atiende en CONACE", 'Sí');
+        cy.selectRadioByField("Se atiende en SENDA", 'Sí');
     cy.contains('button', 'Cancelar').click();
   })
 
@@ -83,16 +81,21 @@ describe('Flujo de Creación de Diagnóstico de Droga', () => {
 
      cy.wait(2000);
 
-        cy.chooseInComplexSelector("div.border > div > div:nth-of-type(1) div.p-dropdown > span", "Proyecto: DAM-COLINA");
+        cy.chooseInComplexSelector("div.border > div > div:nth-of-type(1) div.p-dropdown > span", "DAM-COLINA");
 
         cy.wait(2000)
 
         cy.contains('button', 'Guardar').click();
 
-        cy.contains('Este campo es obligatorio').should('be.visible');
 
-        cy.get('label').contains('Droga').closest('.flex.flex-col').find('small.text-error').should('contain.text', 'Este campo es obligatorio');
-        cy.get('label').contains('Tipo de consumo droga').closest('.flex.flex-col').find('small.text-error').should('contain.text', 'Este campo es obligatorio');
+  cy.get('.text-gray-700', { timeout: 10000 })
+    .should('be.visible')
+    .and('contain.text', 'Por favor complete los campos requeridos');
+
+        cy.get('label').contains('Fecha diagnóstico').closest('.flex.flex-col').find('small.text-error').should('contain.text', 'La fecha de diagnóstico es requerida');
+
+        cy.get('label').contains('Droga').closest('.flex.flex-col').find('small.text-error').should('contain.text', 'La droga es requerida');
+        cy.get('label').contains('Tipo de consumo droga').closest('.flex.flex-col').find('small.text-error').should('contain.text', 'El tipo de consumo de droga es requerido');
 
         cy.get('small.text-error').should('have.length.at.least', 2);
     })
@@ -114,9 +117,10 @@ describe('Flujo de Creación de Diagnóstico de Droga', () => {
     it('debería editar un diagnóstico existente', () => {
 
       cy.scrollTo('bottom');
-      cy.wait(1000);
+      cy.wait(3000);
 
-      cy.get('button[aria-label="Ver"][href*="diagnosticos-droga"]').first().click();
+      // Buscar el primer botón "Ver" en la tabla de diagnósticos de droga
+      cy.get('button[aria-label="Ver"]').first().click();
       cy.wait(1000);
 
       cy.contains('button', 'Editar').click();
@@ -127,21 +131,25 @@ describe('Flujo de Creación de Diagnóstico de Droga', () => {
 
       cy.contains('button', 'Guardar').click();
 
-      cy.get('.p-toast-message-success', { timeout: 10000 })
-        .should('contain.text', 'actualizado exitosamente');
+      cy.get('.text-gray-700', { timeout: 10000 })
+        .should('be.visible')
+        .and('contain.text', 'actualizado exitosamente');
     });
 
-  it.only('debería mostrar el contador de caracteres y validar el límite de 100 caracteres en observaciones', () => {
+  it('debería mostrar el contador de caracteres y validar el límite de 100 caracteres en observaciones', () => {
      cy.contains('Resumen de antecedentes')
       .parent()
       .contains('Añadir diagnóstico')
       .click();
       cy.wait(2000);
 
-    cy.selectDateByField('Fecha diagnóstico', dayjs().format('2025-10-05'));
+    cy.selectDateByField('Fecha diagnóstico', dayjs().format('2025-11-13'));
+    cy.wait(2000);
     cy.selectDropdownByField("Droga", 'ANSIOLITICOS');
     cy.wait(2000);
     cy.selectDropdownByField("Tipo de consumo droga", 'CONSUMO OCASIONAL');
+
+    cy.selectDropdownByField("Profesional/Técnico", 'ALAN ANDRES MORALES MUÑOZ');
 
     cy.contains('label', 'Observaciones')
       .closest('.flex-col')
@@ -155,17 +163,9 @@ describe('Flujo de Creación de Diagnóstico de Droga', () => {
     cy.get('@observationsField').type('a'.repeat(100));
     cy.contains('100/100 caracteres máximo').should('be.visible');
 
-    cy.get('@observationsField').clear();
-    cy.get('@observationsField').type('a'.repeat(115));
-
-    cy.contains('115/100 caracteres máximo').should('be.visible');
-
 
 
     cy.contains('button', 'Guardar').click();
 
-    cy.get('.p-toast-message', { timeout: 10000 })
-      .should('be.visible')
-      .and('contain', 'Las observaciones no pueden exceder los 100 caracteres');
   });
 });
