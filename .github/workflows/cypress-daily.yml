@@ -30,7 +30,7 @@ jobs:
         with:
           browser: chrome
           headed: false
-          spec: cypress/e2e/instrumento_craft.cy.js
+          spec: cypress/e2e/Droga_derivación.cy.js
       
       - name: Guardar videos y screenshots
         uses: actions/upload-artifact@v4
